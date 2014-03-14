@@ -1,0 +1,53 @@
+#Instructions:
+#type "rails c" into your console inside your daapr folder and hit enter
+#Copy and past all the code below (can include comments) into the console. It should start immediately.
+#Type "exit" and click enter
+#Type "rails s" and hit enter
+#Open Chrome
+#Type "localhost:3000" and click enter
+
+#Creates 100 users, each named "Connor Rulez", with email "orangeseven12x@gmail.com" (x between 1 and 100) and password "password123"
+x = 0
+Array.new(100,true).each do |t|
+x = x + 1
+User.create(first_name: "Connor", last_name: "Rulez", email: "orangeseven12" + x.to_s + "@gmail.com", password: "password123", password_confirmation: "password123") end
+
+#Creates 10 Microposts for each user. all of which are the interview, by filmcow, although you may change it as you will.
+User.all.each do |t|
+Array.new(10,true).each do |f|
+Micropost.create(url: "http://www.youtube.com/watch?v=kRX0AQKFtwU", user_id: t.id, title: "The Interview", description: "Awesome", image_url: "http://i1.ytimg.com/vi/kRX0AQKFtwU/maxresdefault.jpg", video_url: "http://www.youtube.com/watch?v=kRX0AQKFtwU", user_name: "Alex Suckz") end end
+
+#Creates Reshares for each Micropost
+Micropost.all.reverse.each do |t|
+Reshare.create(user_id: t.user_id, micropost_id: t.id, user_name: t.user_name, created_at: t.created_at) end
+
+#Creates 20 Interests
+x = 0
+Array.new(20,true).each do |t|
+x = x+1
+Interest.create(inter: "interest" + x.to_s) end
+
+#Adds interest associativity for each user
+User.all.each do |t|
+InterestAssociate.create(user_id: t.id, interest_id: 1+rand(20), strength:20.0, frequency: 1.0)
+PostNum.create(user_id: t.id, posts: Reshare.where(user_id: t.id).length) end
+
+#Creates Featured Users
+Array.new(20,true).each do |t|
+Featured.create(user_id: 1+rand(100)) end
+
+#Creates random relationships between users. Probably about 7 follows per user on average.
+User.all.each do |t|
+x = User.find(t)
+a = Array.new(10)
+a.map!{1+rand(100)}.uniq!
+a.each do |k|
+y = User.find(k)
+x.follow!(y) end end
+
+#Created likes for each reshare
+Reshare.all.each do |t|
+a = Array.new(rand(7))
+a.map!{1+rand(100)}.uniq!
+a.each do |k|
+Like.create(liker_id: k, likeable_id: t.id) end end
